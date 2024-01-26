@@ -11,7 +11,7 @@ const News = (props) => {
   const { savedArticles, setSavedArticles } = useSavedArticle();
   const { user } = useUser();
 
-  const API_KEY = import.meta.env.VITE_API_NEWS_API_KEY
+  const API_KEY = import.meta.env.VITE_APP_NEWS_API_KEY
   const fetchData = async () => {
     try {
       props.setProgress(10);
