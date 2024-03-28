@@ -1,83 +1,76 @@
 import React from "react";
-import Button from "../ui/Button";
 import Heading from "../ui/Heading";
+import Button from "../ui/Button";
+import { useSavedArticle } from "../context/SavedArticleContext";
+import toast from "react-hot-toast";
 
-const SavedItem = (props) => {
-  let {
-    title,
-    description,
-    imageUrl,
-    newsUrl,
-    date,
-    author,
-    source,
-    onRemove,
-  } = props;
+const SavedItem = ({title,imageUrl,article,}) => {
 
-  const article = {
-    title,
-    description,
-    imageUrl,
-    newsUrl,
-    date,
-    author,
-    source,
+  // console.log(article);
+
+  const { setSavedArticles } = useSavedArticle();
+
+  const defaultUrl = "deafult-news.png";
+
+  const removeArticle = (articleToRemove) => {
+    setSavedArticles((prevArticles) => {
+      return prevArticles.filter((article) => {
+        return article.title !== articleToRemove.title;
+      });
+    });
+
+    toast.success("Article Removed Successfully.");
   };
-  // Default image URL
-  const defaultImageUrl = "/deafult-news2.png";
-
-  // Function to truncate text to a fixed length
-  const truncateText = (text, maxLength) => {
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
-  };
-
 
   return (
     <div style={{ display: "flex" }}>
-        <img
-          src={imageUrl || defaultImageUrl}
-          className="card-img-top"
-          alt="Image not available"
-          style={{
-            width: "150px",
-            height: "150px", // Adjust the height as needed
-            objectFit: "cover",
-          }}
-        />
-        <div
-          style={{
-            marginLeft: "10px",
-            flexGrow: 1,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-        <div>
-        <Heading as="h4" style={{ marginBottom: "10px" }}>
-          {title}
-        </Heading>
-      </div>
+      <img
+        src={imageUrl}
+        className="card-img-top"
+        alt="Image not available"
+        style={{
+          width: "15rem",
+          height: "15rem",
+          objectFit: "cover",
+        }}
+
+        onError={(e) => {
+          e.target.onerror = null; // Prevents the error from being triggered again
+          e.target.src = defaultUrl; // Sets the default image URL
+        }}
+      />
       <div
         style={{
-          marginTop: "auto",
+          marginLeft: "1rem",
+          flexGrow: 1,
           display: "flex",
+          flexDirection: "column",
           justifyContent: "space-between",
         }}
       >
+        <div>
+          <Heading as="h5" style={{ marginBottom: "1rem" }}>
+            {title}
+          </Heading>
+        </div>
+        <div
+          style={{
+            marginTop: "auto",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Button
             size="small"
             onClick={() => window.open(newsUrl, "_blank")}
-            style={{marginRight:"10px"}}
+            style={{ marginRight: "1rem" }}
           >
             Read More
           </Button>
-          <Button 
-            onClick={() => onRemove(article)}
+          <Button
+            onClick={() => removeArticle(article)}
             size="small"
-            variation = 'secondary'
+            variation="secondary"
           >
             Remove
           </Button>

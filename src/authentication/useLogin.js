@@ -1,26 +1,27 @@
-import {useMutation, useQueryClient} from "@tanstack/react-query"
-import { useNavigate } from "react-router-dom"
-import { login as loginApi} from "./apiAuth";
-import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { login as loginApi } from './apiAuth';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
+const useLogin = () => {
 
-export function useLogin(){
-    const navigate = useNavigate();
-    const queryClient = useQueryClient()
-    const{mutate:login,isLoading} = useMutation({
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+   const {mutate:login,isPending:isLogin} = useMutation({
         mutationFn:({email,password})=>loginApi({email,password}),
         onSuccess:(user)=>{
+          console.log(user)
             queryClient.setQueryData(['user'], user.user);
-            console.log(user)
-            navigate('/dashboard',{replace:true})
+            toast.success("Login Successfully")
+            navigate('/',{replace:true})
         },
         onError:err=>{
             console.log("ERROR in useLogin : ",err)
             toast.error("Incorrect credentials")
         }
-    })
+  })
 
-    return {login,isLoading}
+  return {login,isLogin}
 }
 
-
+export default useLogin

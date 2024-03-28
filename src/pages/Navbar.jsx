@@ -1,43 +1,38 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import styled from "styled-components";
-import { FaBusinessTime, FaHome } from "react-icons/fa";
-import { MdHealthAndSafety, MdOutlineSportsBaseball, MdScience} from "react-icons/md";
+import React from 'react';
+import { NavLink} from 'react-router-dom';
+import { FaHome, FaArchive, FaBusinessTime } from "react-icons/fa";
+import { MdHealthAndSafety, MdOutlineSportsBaseball, MdScience } from "react-icons/md";
 import { SiDcentertainment } from "react-icons/si";
 import { GrTechnology } from "react-icons/gr";
-import { BiCategory } from "react-icons/bi";
 import { IoBookmarkSharp } from "react-icons/io5";
-import { useUser } from "../authentication/useUser";
 import { SlLogin } from "react-icons/sl";
-import { FaArchive } from "react-icons/fa";
+import styled from 'styled-components';
+import CustomNavLink from './CustomNavLink';
+import useUser from '../authentication/useUser';
 
-
-
-const NavList = styled.ul`
+export const NavList = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.2rem;
 `;
 
-const StyledNavLink = styled(NavLink)`
+export const StyledNavLink = styled(NavLink)`
   &:link,
   &:visited {
     display: flex;
-    align-items: center;
     gap: 1.2rem;
-
-    color: var(--color-grey-600);
+    align-items: center;
+    color: var(--color-grey-600);;
     font-size: 1.6rem;
     font-weight: 500;
     padding: 1.2rem 2.4rem;
-    transition: all 0.3s;
+    transition: all .3s;
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
-  &.active:visited {
+  &.active:visited{
     color: var(--color-grey-800);
     background-color: var(--color-grey-50);
     border-radius: var(--border-radius-sm);
@@ -58,85 +53,50 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
+export const navItems = [
+  { to: "/dashboard", icon: <FaHome />, text: "Home" },
+  { to: "general", icon: <FaArchive />, text: "General", category: "general" },
+  { to: "business", icon: <FaBusinessTime />, text: "Business", category: "business" },
+  { to: "technology", icon: <GrTechnology />, text: "Technology", category: "technology" },
+  { to: "entertainment", icon: <SiDcentertainment />, text: "Entertainment", category: "entertainment" },
+  { to: "sports", icon: <MdOutlineSportsBaseball />, text: "Sports", category: "sports" },
+  { to: "science", icon: <MdScience />, text: "Science", category: "science" },
+  { to: "health", icon: <MdHealthAndSafety />, text: "Health", category: "health" },
+  { to: "/saved-articles", icon: <IoBookmarkSharp />, text: "Saved Articles" },
+  
+];
+
 const Navbar = () => {
   const {user} = useUser()
+
   return (
     <nav>
-      <NavList>
-        <li>
-          <StyledNavLink to="/dashboard">
-            <FaHome/>
-            <span>Home</span>
-          </StyledNavLink>
-        </li>
-        {/*<li>
-          <StyledNavLink to="/">
-            <BiCategory/>
-            <span>Categories</span>
-          </StyledNavLink>
-  </li>*/}
-        <li>
-          <StyledNavLink to="/general">
-          <FaArchive/>
-          <span>General</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/business">
-          <FaBusinessTime/>
-          <span>Business</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/technology">
-          <GrTechnology/>
-          <span>Technology</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/entertainment">
-          <SiDcentertainment/>
-          <span>Entertainment</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/sports">
-          <MdOutlineSportsBaseball/>
-          <span>
-          Sports
-          </span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/science">
-          <MdScience/>
-          <span>Science</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/health">
-          <MdHealthAndSafety/>
-          <span>Health</span>
-          </StyledNavLink>
-        </li>
-        <li>
-          <StyledNavLink to="/saved-articles">
-          <IoBookmarkSharp/>
-          <span>Saved</span>
-          </StyledNavLink>
-        </li>
-        {
-          !user && 
-          <li>
-            <StyledNavLink to="/login">
-            <SlLogin/>
-            <span>Login</span>
+    <NavList>
+      {navItems.map((item, index) => (
+        <li key={index}>
+          {item.to.startsWith('/') ? (
+            <StyledNavLink to={item.to}>
+              {item.icon}
+              <span>{item.text}</span>
             </StyledNavLink>
-          </li>
+          ) : (
+            <CustomNavLink to={item.to} text={item.text} icon={item.icon} category={item.category} />
+          )}
+        </li>
+      ))}
+        {
+          !user && (
+            <li>
+              <StyledNavLink to="/sign-in">
+                <SlLogin />
+                <span>Login</span>
+              </StyledNavLink>
+            </li>
+          )
         }
-      </NavList>
-    </nav>
-  );
+    </NavList>
+  </nav>
+);
 };
 
 export default Navbar;

@@ -1,43 +1,39 @@
-import React from 'react'
-import LoginForm from '../authentication/LoginForm'
-import styled from 'styled-components'
-import Heading from '../ui/Heading'
-import { NavLink, useNavigate } from 'react-router-dom'
-import Button from '../ui/Button'
-import FormRow from '../ui/FormRow'
+import React from "react";
+import LoginForm from "./LoginForm";
+import Heading from "../ui/Heading";
+import styled from "styled-components";
+import Button from "../ui/Button";
+import { useNavigate } from "react-router-dom";
+import FormRow from "../ui/FormRow";
+import Logo from "./Logo";
+import Wrapper from "../ui/Wrapper";
 
 
-const LoginLayout = styled.main`
-    min-height: 100vh;
-    display: grid;
-  grid-template-columns: 48rem;
-  align-content: center;
-  justify-content: center;
-  gap: 3.2rem;
-  background-color: var(--color-grey-50);
-`
+
+
 
 const Login = () => {
   const navigate = useNavigate();
 
-  // console.log(user)
-
   return (
-    <LoginLayout>
-      <Heading as="h1" style={{textAlign:"center"}} >Log in to your account</Heading>
+    <Wrapper>
+      <Logo/>
+      <Heading as="h4">Log in to your account</Heading>
       <LoginForm />
       <FormRow>
-      <Button
+        <Button
           onClick={() => navigate("/dashboard")}
           variation="secondary"
           size="large"
         >
-          Go to Homepage
+          Dashboard
         </Button>
-        <Button onClick={() => navigate("/new-user")}>Create a new Account</Button>
+        <Button onClick={() => navigate("/sign-up")}>
+          Create a new Account
+        </Button>
       </FormRow>
-    </LoginLayout>
-  )
-}
+    </Wrapper>
+  );
+};
 
-export default Login
+export default Login;

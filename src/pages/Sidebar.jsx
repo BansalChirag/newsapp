@@ -1,30 +1,27 @@
-import React, { useState } from "react";
-import Navbar from "./Navbar";
-import styled from "styled-components";
-import Logo from "./Logo";
+import React from 'react'
+import Navbar from './Navbar'
+import styled from 'styled-components'
+import Logo from './Logo'
 
 const StyledSidebar = styled.aside`
   background-color: var(--color-grey-0);
   display: grid;
   padding: 3.2rem 2.4rem;
+  /* height: 100vh; */
   border-right: 1px solid var(--color-grey-100);
   grid-row: 1/-1;
-
-  @media (max-width:767px) {
-    display: none;
-  }
-`;
+`
 
 
 const Sidebar = () => {
-  
+
 
   return (
     <StyledSidebar>
-      <Logo />
-      <Navbar />
+      <Logo/>
+      <Navbar/>
     </StyledSidebar>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

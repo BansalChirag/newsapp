@@ -1,7 +1,7 @@
-import supabase, { supabaseUrl } from "../supabase";
+import toast from "react-hot-toast";
+import supabase from "../supabase";
 
-
-export async function signup({fullName,email,password}){
+export async function signup({ fullName, email, password }) {
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -12,26 +12,32 @@ export async function signup({fullName,email,password}){
             }
         }
       });  
-      return {data,error:error.message};
-}
-
-export async function login({email,password }) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if(error){
-    throw new Error(error.message)
-  }
-  return data;
+      if(error) {
+        throw new Error(error.message)
+    }
+        
+    return data;
 }
 
 
+
+
+export async function login({ email, password }) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+    
+      if(error){
+        throw new Error(error.message)
+      }
+
+      return data;
+}
 
 export async function getCurrentUser(){
-    const{data:session} = await supabase.auth.getSession()
 
+    const {data:session} = await supabase.auth.getSession();
     if(!session.session) return null;
 
     const {data,error} = await supabase.auth.getUser();
@@ -40,45 +46,55 @@ export async function getCurrentUser(){
         throw new Error(error.message)
     }
 
-    return data?.user;
+
+    return data?.user
+
 }
 
-
 export async function logout(){
-    const {error} = supabase.auth.signOut()
-
+    const {error} = supabase.auth.signOut();
     if(error){
         throw new Error(error.message)
     }
-}   
-
+}
 
 export async function updateCurrentUser({password,fullName,avatar}){
-
     let updateData;
 
-    if(password) updateData = {password};
-    if(fullName) updateData = {data:{fullName}};
 
-    const { data, error } = await supabase.auth.updateUser(updateData);
+    if(password) updateData = {password}
+    if(fullName) updateData = {data:{fullName}}
+
+    const  {data,error} = await supabase.auth.updateUser(updateData);
+
     if (error) throw new Error(error.message);
     if(!avatar) return data
 
 
-    const fileName = `avatar-${data.user.id}-${Math.random()}`;
+    const fileName = `avatar-${data.user.id }-${Math.random()}`;
 
-    const {error:storageError} = await supabase.storage.from("avatars").upload(fileName,avatar);
+    const {error:storageError} = await supabase.storage.from("avatars").upload(fileName,avatar)
 
     if (storageError) throw new Error(storageError.message);
 
 
-    const {data:updatedUser,error:error2} = await supabase.auth.updateUser({
+    const {data: updatedUser, error: error2} = await supabase.auth.updateUser({
         data:{
-            avatar:`${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`
+            avatar: `${import.meta.env.VITE_APP_SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`
         }
-    })
+    });
+    if(error2) throw new Error (error2.message);
+    return updatedUser
+}
 
+export async function forgotPassword({email}){
     
-  if (error2) throw new Error(error2.message);
-  return updatedUser;
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email,{redirectTo:"http://localhost:5173/reset-password"})
+
+    console.log(data);
+    if(error){
+        throw new Error(error.message)
+      }
+
+      return data;
 }

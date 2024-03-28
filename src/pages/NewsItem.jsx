@@ -1,56 +1,66 @@
 import React from "react";
-import Button from "../ui/Button";
-import Heading from "../ui/Heading";
-import { useSavedArticle } from "../context/SavedArticleContextApi";
+import { useSavedArticle } from "../context/SavedArticleContext";
 import toast from "react-hot-toast";
+import Button from "../ui/Button";
+import useUser from "../authentication/useUser";
+import Heading from "../ui/Heading";
 
-const NewsItem = (props) => {
-  const { title, description, imageUrl, newsUrl, date, author, onSave } = props;
-
-  const article = {
-    title,
-    description,
-    imageUrl,
-    newsUrl,
-    date,
-    author,
-  };
-
-  const isSavedArticle = (articleToCheck) => {
-    return savedArticles.some(savedArticle => savedArticle.title === articleToCheck.title );
-  };
-
-  const {setSavedArticles,savedArticles} = useSavedArticle()
-
-  const defaultImageUrl = "/deafult-news.png";
-
+const NewsItem = ({
+  title,
+  imageUrl,
+  newsUrl,
+  article,
+  category
+}) => {
+  const {user} = useUser();
+  const { savedArticles, setSavedArticles } = useSavedArticle();
   
+  const isSavedArticle = (article) => {
+    return savedArticles.some(
+      (savedArticles) => savedArticles.title === article.title
+    );
+  };
 
-  const removeItem = (articleToRemove) => {
+  const removeArticle = (articleToRemove) => {
     setSavedArticles((prevArticles) => {
-      return prevArticles.filter(
-        (article) => article.title !== articleToRemove.title
-      );
+      return prevArticles.filter((article) => {
+        return article.title !== articleToRemove.title;
+      });
     });
+
     toast.success("Article Removed Successfully.");
   };
 
+  const saveArticle = (articleToSave) => {
+    if (!user) {
+      toast.error("To save an article, you need to login first.");
+      return;
+    }
+    const articleWithCategory = { ...articleToSave, category };
+    setSavedArticles([...(savedArticles || []), articleWithCategory]);
+    toast.success("Article Saved Successfully.");
+  };
 
+  const defaultUrl = 'deafult-news.png'
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex"}}>
       <img
-        src={imageUrl || defaultImageUrl}
+        src={imageUrl}
         alt="Image not available"
         style={{
-          width: "150px",
-          height: "150px",
+          width: "15rem",
+          height: "15rem",
           objectFit: "cover",
+        }}
+        onError={(e) => {
+          e.target.onerror = null; // Prevents the error from being triggered again
+          e.target.src = defaultUrl; // Sets the default image URL
         }}
       />
       <div
         style={{
-          marginLeft: "10px",
+          marginLeft: "1rem",
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
@@ -58,9 +68,7 @@ const NewsItem = (props) => {
         }}
       >
         <div>
-          <Heading as="h4" style={{ marginBottom: "10px" }}>
-            {title}
-          </Heading>
+          <Heading as="h5">{title}</Heading>
         </div>
         <div
           style={{
@@ -72,17 +80,25 @@ const NewsItem = (props) => {
           <Button
             size="small"
             onClick={() => window.open(newsUrl, "_blank")}
-            style={{marginRight:"10px"}}
+            style={{ marginRight: "1rem" }}
           >
             Read More
           </Button>
           {isSavedArticle(article) ? (
-            <Button onClick={() => removeItem(article)} size="small" variation="secondary">
-              Remove from Saved
+            <Button
+              onClick={() => removeArticle(article)}
+              size="small"
+              variation="secondary"
+            >
+              Remove from saved
             </Button>
           ) : (
-            <Button onClick={() => onSave(article)} size="small" variation="secondary">
-              Save Article
+            <Button
+              onClick={() => saveArticle(article)}
+              size="small"
+              variation="secondary"
+            >
+              Save article
             </Button>
           )}
         </div>
