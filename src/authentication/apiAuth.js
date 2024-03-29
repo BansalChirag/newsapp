@@ -88,8 +88,8 @@ export async function updateCurrentUser({password,fullName,avatar}){
 }
 
 export async function forgotPassword({email}){
-    
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email,{redirectTo:"http://localhost:5173/reset-password"})
+    const origin = import.meta.env.VITE_APP_ORIGIN || 'http://localhost:5173';
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email,{redirectTo:`${origin}/reset-password`})
 
     console.log(data);
     if(error){
