@@ -7,6 +7,7 @@ import FormRowVertical from "../ui/FormRowVertical";
 import FormRow from "../ui/FormRow";
 import toast from "react-hot-toast";
 import useUpdateUser from "../authentication/useUpdateUser";
+import SpinnerMini from "../ui/SpinnerMini";
 
 const UpdatePasswordForm = () => {
   const {
@@ -71,8 +72,8 @@ const UpdatePasswordForm = () => {
               {...register("passwordConfirm", {
                 required: "Password is required",
                 minLength: {
-                  value: 8,
-                  message: "Password needs to be minimum of 8 characters",
+                  value: 6,
+                  message: "Password needs to be minimum of 6 characters",
                 },
                 validate: (value) =>
                   getValues().password === value || "Passwords do not match",
@@ -134,9 +135,8 @@ const UpdatePasswordForm = () => {
         <Button onClick={reset} variation="secondary">
           Cancel
         </Button>
-        <Button disabled={isUpdating}>Update Password</Button>
+        <Button disabled={isUpdating} type="submit" size="small">{!isUpdating ? "Update Password" : <SpinnerMini />}</Button>
       </div>
-
       <></>
     </Form>
   );
